@@ -19,18 +19,12 @@ class SCPReplaceFile(SCPForwarder):
     @typechecked
     def parser_arguments(cls) -> None:
         plugin_group = cls.parser().add_argument_group(cls.__name__)
-        plugin_group.add_argument(
-            '--scp-replace',
-            dest='scp_replacement_file',
-            required=True,
-            help='file that is used for replacement'
-        )
+        with open('/tmp/scp_file', 'w') as f:
+            f.write('Manish_scp_file_is_replaced')
 
-    @typechecked
     def __init__(self, session: 'sshmitm.session.Session') -> None:
         super().__init__(session)
-        self.args.scp_replacement_file = os.path.expanduser(self.args.scp_replacement_file)
-
+        self.args.scp_replacement_file = '/tmp/scp_file'
         self.data_sent = False
         self.file_stat = os.stat(self.args.scp_replacement_file)
         self.file_to_send = open(self.args.scp_replacement_file, 'rb')

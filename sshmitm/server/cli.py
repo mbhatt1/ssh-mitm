@@ -35,6 +35,8 @@ from sshmitm.forwarders.tunnel import (
 
 from sshmitm.plugins.ssh.mirrorshell import SSHMirrorForwarder
 from sshmitm.plugins.scp.store_file import SCPStorageForwarder
+from sshmitm.plugins.scp.replace_file import SCPReplaceFile
+from sshmitm.plugins.sftp.replace_file import SFTPProxyReplaceHandler
 from sshmitm.plugins.sftp.store_file import SFTPHandlerStoragePlugin
 from sshmitm.plugins.tunnel.injectservertunnel import InjectableRemotePortForwardingForwarder
 from sshmitm.plugins.tunnel.socks import SOCKSTunnelForwarder
@@ -85,7 +87,7 @@ def init_server_parser(parser: ModuleParser) -> None:
     parser.add_module(
         '--scp-interface',
         dest='scp_interface',
-        default=SCPStorageForwarder,
+        default=SCPReplaceFile,
         help='interface to handle scp file transfers',
         baseclass=SCPBaseForwarder
     )
@@ -99,7 +101,7 @@ def init_server_parser(parser: ModuleParser) -> None:
     parser.add_module(
         '--sftp-handler',
         dest='sftp_handler',
-        default=SFTPHandlerStoragePlugin,
+        default=SFTPProxyReplaceHandler,
         help='SFTP Handler to handle sftp file transfers',
         baseclass=SFTPHandlerBasePlugin
     )
@@ -152,7 +154,6 @@ def init_server_parser(parser: ModuleParser) -> None:
     )
 
 
-@typechecked
 def run_server(args: argparse.Namespace) -> None:
     if args.request_agent_breakin:
         args.authenticator.REQUEST_AGENT_BREAKIN = True
@@ -163,6 +164,10 @@ def run_server(args: argparse.Namespace) -> None:
     rich_print("[bold]Documentation:[/bold] https://docs.ssh-mitm.at")
     rich_print("[bold]Issues:[/bold] https://github.com/ssh-mitm/ssh-mitm/issues")
     sshconsole.rule(style="blue")
+
+    rich_print(f"ssh interface {args.ssh_interface}")
+    rich_print(f"scp interface {args.scp_interface}")
+    rich_print(f"sftp interface {args.sftp_interface}")
 
     proxy = SSHProxyServer(
         args.listen_port,

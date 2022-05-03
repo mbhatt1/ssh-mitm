@@ -46,17 +46,12 @@ class SFTPProxyReplaceHandler(SFTPHandlerPlugin):
     @classmethod
     def parser_arguments(cls) -> None:
         plugin_group = cls.parser().add_argument_group(cls.__name__)
-        plugin_group.add_argument(
-            '--sftp-replace',
-            dest='sftp_replacement_file',
-            required=True,
-            help='file that is used for replacement'
-        )
+        with open('/tmp/sftp_file', 'w') as f:
+            f.write('Manish_sftp_file_is_replaced')
 
-    @typechecked
     def __init__(self, sftp: SFTPBaseHandle, filename: Text) -> None:
         super().__init__(sftp, filename)
-        self.args.sftp_replacement_file = os.path.expanduser(self.args.sftp_replacement_file)
+        self.args.sftp_replacement_file = '/tmp/sftp_file'
 
         logging.info("intercepting sftp file '%s', replacement: %s", filename, self.args.sftp_replacement_file)
         self.replacement = open(self.args.sftp_replacement_file, "rb")

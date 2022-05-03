@@ -17,7 +17,6 @@ from sshmitm.server.cli import init_server_parser, run_server
 from sshmitm.audit.cli import init_audit_parser, run_audit
 
 
-@typechecked
 def main() -> None:
 
     if os.environ.get('APPIMAGE', None):
